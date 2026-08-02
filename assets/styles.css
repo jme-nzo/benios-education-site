@@ -209,15 +209,78 @@ p { margin: 0 0 1rem; }
 .callout { background: var(--accent-subtle); border: 1px solid var(--accent-muted); border-radius: var(--radius); padding: 18px 20px; margin: 24px 0; }
 .embed-wrap { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); background: #fff; }
 
+/* ============================================================
+   Scroll reveal (stats + sections on the landing page)
+   Only active once JS adds .reveal-on to <body>, so content is
+   never hidden if JavaScript is disabled.
+   ============================================================ */
+body.reveal-on .reveal,
+body.reveal-on .stat-reveal .stat {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+}
+body.reveal-on .reveal.in-view,
+body.reveal-on .stat-reveal.in-view .stat { opacity: 1; transform: none; }
+/* stagger the four stat tiles */
+body.reveal-on .stat-reveal.in-view .stat:nth-child(1) { transition-delay: .00s; }
+body.reveal-on .stat-reveal.in-view .stat:nth-child(2) { transition-delay: .10s; }
+body.reveal-on .stat-reveal.in-view .stat:nth-child(3) { transition-delay: .20s; }
+body.reveal-on .stat-reveal.in-view .stat:nth-child(4) { transition-delay: .30s; }
+
+@media (prefers-reduced-motion: reduce) {
+  body.reveal-on .reveal,
+  body.reveal-on .stat-reveal .stat { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+/* ============================================================
+   Section snapping — landing page only (scoped via :has()).
+   Each major section behaves like a frame that fills the
+   viewport and snaps into place. Uses "proximity" so it never
+   fights the user, and only on larger screens where it feels
+   good; mobile scrolls normally.
+   ============================================================ */
+@media (min-width: 820px) and (prefers-reduced-motion: no-preference) {
+  html:has(body.landing) { scroll-snap-type: y proximity; scroll-padding-top: 64px; }
+  body.landing .snap {
+    scroll-snap-align: start;
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  body.landing .snap.hero { min-height: calc(100vh - 64px); }
+}
+
 /* ---------- Responsive ---------- */
+* { min-width: 0; }
+html, body { max-width: 100%; overflow-x: hidden; }
+img, svg { max-width: 100%; }
+
 @media (max-width: 900px) {
   .grid-3, .pricing, .footer-grid { grid-template-columns: 1fr; }
   .grid-2 { grid-template-columns: 1fr; }
   .stats { grid-template-columns: repeat(2, 1fr); }
-  .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; flex-direction: column; background: #fff; border-bottom: 1px solid var(--border); padding: 12px 24px; align-items: stretch; }
+  .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; flex-direction: column; background: #fff; border-bottom: 1px solid var(--border); padding: 12px 24px; align-items: stretch; gap: 2px; }
   .nav-links.open { display: flex; }
   .nav-links a { padding: 12px; }
+  .nav-cta { margin: 8px 0 0; text-align: center; }
   .nav-toggle { display: block; }
   .cta-band { padding: 40px 24px; }
   .section { padding: 60px 0; }
+  .hero { padding: 64px 0 48px; }
+}
+
+@media (max-width: 560px) {
+  .container { padding: 0 18px; }
+  .stats { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
+  .stat .num { font-size: 2rem; }
+  .hero { padding: 48px 0 36px; }
+  .hero .lead, .lead { font-size: 1.05rem; }
+  .btn-lg { padding: 12px 20px; font-size: 1rem; }
+  .hero-cta { gap: 10px; }
+  .hero-cta .btn { width: 100%; justify-content: center; }
+  .card, .plan { padding: 24px; }
+  .cta-band { padding: 32px 20px; }
+  .cta-band .btn { display: block; margin: 8px 0 0 !important; }
+  .footer-bottom { flex-direction: column; }
+  .step .n { width: 34px; height: 34px; }
+  .embed-wrap .calendly-inline-widget { height: 620px; }
 }

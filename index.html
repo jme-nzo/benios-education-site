@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="assets/styles.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231f2328'/><text x='50' y='68' font-size='58' fill='white' font-family='sans-serif' font-weight='bold' text-anchor='middle'>B</text></svg>" />
 </head>
-<body>
+<body class="landing">
 
   <!-- HEADER -->
   <header class="site-header">
@@ -27,7 +27,7 @@
   </header>
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero snap">
     <div class="container">
       <h1>Immersive tech education, built for Singapore.</h1>
       <p class="lead">BENIOS Education turns curious teams and individuals into confident XR creators through structured, mentor-led programs grounded in real-world projects.</p>
@@ -40,13 +40,13 @@
   </section>
 
   <!-- LOGOS / TRUST -->
-  <section class="section-sm">
+  <section class="section-sm snap">
     <div class="container">
-      <div class="stats">
-        <div class="stat"><div class="num">500+</div><div class="label">Learners trained</div></div>
-        <div class="stat"><div class="num">3</div><div class="label">Structured tracks</div></div>
-        <div class="stat"><div class="num">40+</div><div class="label">Hands-on projects</div></div>
-        <div class="stat"><div class="num">4.9/5</div><div class="label">Average rating</div></div>
+      <div class="stats stat-reveal">
+        <div class="stat"><div class="num" data-count="500" data-suffix="+">500+</div><div class="label">Learners trained</div></div>
+        <div class="stat"><div class="num" data-count="3">3</div><div class="label">Structured tracks</div></div>
+        <div class="stat"><div class="num" data-count="40" data-suffix="+">40+</div><div class="label">Hands-on projects</div></div>
+        <div class="stat"><div class="num" data-count="4.9" data-decimals="1" data-suffix="/5">4.9/5</div><div class="label">Average rating</div></div>
       </div>
     </div>
   </section>
@@ -54,14 +54,13 @@
   <hr class="divider" />
 
   <!-- WHAT YOU LEARN -->
-  <section class="section">
+  <section class="section snap">
     <div class="container">
-      <div class="center" style="margin-bottom:48px">
-        <span class="pill">What you'll learn</span>
+      <div class="center reveal" style="margin-bottom:48px">
         <h2>From fundamentals to shipping real XR</h2>
         <p class="lead center">A curriculum designed around outcomes, not theory. Every module ends with something you've actually built.</p>
       </div>
-      <div class="grid grid-3">
+      <div class="grid grid-3 reveal">
         <div class="card">
           <div class="icon"><img src="assets/icons/eye.svg" alt="" /></div>
           <h3>XR &amp; Spatial Fundamentals</h3>
@@ -99,11 +98,10 @@
   <hr class="divider" />
 
   <!-- HOW IT WORKS -->
-  <section class="section">
+  <section class="section snap">
     <div class="container">
-      <div class="grid grid-2" style="align-items:center; gap:56px">
+      <div class="grid grid-2 reveal" style="align-items:center; gap:56px">
         <div>
-          <span class="pill">How it works</span>
           <h2>A clear path from sign-up to skilled</h2>
           <div class="steps" style="margin-top:28px">
             <div class="step"><div class="n"></div><div><h3>Choose your package</h3><p class="muted">Pick the track that matches your goals and experience level.</p></div></div>
@@ -125,9 +123,9 @@
   </section>
 
   <!-- CTA -->
-  <section class="section">
+  <section class="section snap">
     <div class="container">
-      <div class="cta-band">
+      <div class="cta-band reveal">
         <h2>Build something worth wearing a headset for.</h2>
         <p class="lead center" style="margin:0 auto 24px">Join the next BENIOS Education cohort and start creating immersive experiences.</p>
         <a class="btn btn-primary btn-lg" href="packages.html">Get started →</a>
@@ -168,6 +166,51 @@
       </div>
     </div>
   </footer>
+
+  <!-- Reveal-on-scroll + animated stat counters -->
+  <script>
+    (function () {
+      var els = document.querySelectorAll(".reveal, .stat-reveal");
+      // Arm the hidden state only now that JS is running.
+      document.body.classList.add("reveal-on");
+
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function countUp(scope) {
+        scope.querySelectorAll("[data-count]").forEach(function (node) {
+          var target = parseFloat(node.getAttribute("data-count"));
+          var decimals = parseInt(node.getAttribute("data-decimals") || "0", 10);
+          var suffix = node.getAttribute("data-suffix") || "";
+          if (reduce) { node.textContent = target.toFixed(decimals) + suffix; return; }
+          var dur = 1300, start = null;
+          function tick(ts) {
+            if (start === null) start = ts;
+            var p = Math.min((ts - start) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            node.textContent = (target * eased).toFixed(decimals) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        });
+      }
+
+      if (!("IntersectionObserver" in window)) {
+        els.forEach(function (e) { e.classList.add("in-view"); if (e.classList.contains("stat-reveal")) countUp(e); });
+        return;
+      }
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          en.target.classList.add("in-view");
+          if (en.target.classList.contains("stat-reveal")) countUp(en.target);
+          io.unobserve(en.target);
+        });
+      }, { threshold: 0.35, rootMargin: "0px 0px -8% 0px" });
+
+      els.forEach(function (e) { io.observe(e); });
+    })();
+  </script>
 
 </body>
 </html>

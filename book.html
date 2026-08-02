@@ -26,8 +26,7 @@
 
   <section class="hero" style="padding-bottom:32px">
     <div class="container">
-      <span class="eyebrow" id="welcome">Let's talk</span>
-      <h1>Book a call or send a message.</h1>
+      <h1 id="welcome">Book a call or send a message.</h1>
       <p class="lead">Just enrolled? Lock in your kickoff below. Still deciding? Grab a free 15-minute chat and we'll help you pick the right track.</p>
     </div>
   </section>
@@ -122,9 +121,8 @@
     (function () {
       var pkg = new URLSearchParams(location.search).get("purchased");
       if (pkg) {
-        document.getElementById("welcome").textContent = "Payment received, you're in!";
-        var h1 = document.querySelector("h1");
-        if (h1) h1.textContent = "Thanks! Now book your kickoff call.";
+        var h1 = document.getElementById("welcome");
+        if (h1) h1.textContent = "Payment received. Now book your kickoff call.";
       }
     })();
   </script>
