@@ -99,11 +99,8 @@ p { margin: 0 0 1rem; }
 .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; color: var(--fg-default); }
 .brand:hover { text-decoration: none; }
-.brand .mark {
-  width: 30px; height: 30px; border-radius: 8px;
-  background: var(--fg-default);
-  display: grid; place-items: center; color: #fff; font-weight: 800; font-size: .95rem;
-}
+.brand .logo { height: 22px; width: auto; display: block; }
+.site-footer .brand .logo { height: 26px; }
 .nav-links { display: flex; align-items: center; gap: 4px; }
 .nav-links a { color: var(--fg-muted); font-weight: 500; font-size: .95rem; padding: 8px 12px; border-radius: var(--radius); }
 .nav-links a:hover { color: var(--fg-default); background: var(--canvas-subtle); text-decoration: none; }
@@ -143,8 +140,12 @@ p { margin: 0 0 1rem; }
 .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent-muted); }
 .card .icon {
   width: 44px; height: 44px; border-radius: 10px; background: var(--accent-subtle);
-  display: grid; place-items: center; font-size: 1.3rem; margin-bottom: 16px;
+  display: grid; place-items: center; margin-bottom: 16px;
 }
+.card .icon img { width: 22px; height: 22px; display: block; }
+/* inline heading icon */
+.h-icon { width: 20px; height: 20px; vertical-align: -4px; margin-right: 8px; }
+.feature-illus img { width: 40px; height: 40px; }
 
 /* ---------- Stats ---------- */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }

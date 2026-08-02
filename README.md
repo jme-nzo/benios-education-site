@@ -94,7 +94,7 @@ Two good options:
   *Shopify admin → Settings → Checkout → Order status page → Additional scripts*,
   add:
   ```html
-  <p>🎉 Thanks for enrolling! <a href="https://YOUR-GH-PAGES-URL/book.html?purchased=pro">
+  <p>Thanks for enrolling! <a href="https://YOUR-GH-PAGES-URL/book.html?purchased=pro">
   Book your kickoff call →</a></p>
   ```
   `book.html` detects `?purchased=` and shows a tailored "you're in!" message.
