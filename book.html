@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Call & Contact — BENIOS Education</title>
+  <meta name="description" content="Book your onboarding or a pre-sales chat with BENIOS Education, or send us a message." />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231f2328'/><text x='50' y='68' font-size='58' fill='white' font-family='sans-serif' font-weight='bold' text-anchor='middle'>B</text></svg>" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="mark">B</span> BENIOS <span class="muted" style="font-weight:500">Education</span></a>
+      <button class="nav-toggle" aria-label="Menu" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+      <nav class="nav-links" id="nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="xr-growth.html">XR Growth in SG</a>
+        <a href="packages.html">Packages</a>
+        <a href="book.html" class="active">Contact</a>
+        <a class="btn btn-primary nav-cta" href="packages.html">View Packages</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" style="padding-bottom:32px">
+    <div class="container">
+      <span class="eyebrow" id="welcome">Let's talk</span>
+      <h1>Book a call or send a message.</h1>
+      <p class="lead">Just enrolled? Lock in your kickoff below. Still deciding? Grab a free 15-minute chat and we'll help you pick the right track.</p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="grid grid-2" style="gap:40px; align-items:start">
+
+        <!-- CALENDLY -->
+        <div>
+          <h2 style="font-size:1.6rem">📅 Schedule a time</h2>
+          <p class="muted">Pick a slot that works for you — you'll get a calendar invite instantly.</p>
+          <div class="embed-wrap">
+            <!-- ============================================================
+                 CALENDLY EMBED
+                 Replace data-url with YOUR Calendly scheduling link, e.g.
+                 https://calendly.com/benios-education/onboarding
+                 See README.md → "Calendly setup".
+                 ============================================================ -->
+            <div class="calendly-inline-widget"
+                 data-url="https://calendly.com/YOUR-HANDLE/onboarding"
+                 style="min-width:320px;height:680px;"></div>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+          </div>
+          <noscript><p class="muted">Enable JavaScript, or email us to book a time.</p></noscript>
+        </div>
+
+        <!-- CONTACT FORM + EMAIL -->
+        <div>
+          <h2 style="font-size:1.6rem">✉️ Send a message</h2>
+          <p class="muted">Prefer to write? Ask us anything about a package you're considering or one you've bought.</p>
+
+          <!-- ============================================================
+               CONTACT FORM
+               This posts to Formspree (no backend needed). Replace
+               YOUR_FORM_ID with your Formspree form ID, OR swap the
+               action for your own endpoint / Google Form / Tally, etc.
+               See README.md → "Email / contact form setup".
+               ============================================================ -->
+          <form class="card" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" style="padding:24px">
+            <label style="display:block;margin-bottom:14px">
+              <span style="font-weight:600;font-size:.9rem">Name</span>
+              <input name="name" required
+                     style="width:100%;padding:10px 12px;margin-top:6px;border:1px solid var(--border);border-radius:6px;font-size:1rem;font-family:inherit" />
+            </label>
+            <label style="display:block;margin-bottom:14px">
+              <span style="font-weight:600;font-size:.9rem">Email</span>
+              <input type="email" name="email" required
+                     style="width:100%;padding:10px 12px;margin-top:6px;border:1px solid var(--border);border-radius:6px;font-size:1rem;font-family:inherit" />
+            </label>
+            <label style="display:block;margin-bottom:14px">
+              <span style="font-weight:600;font-size:.9rem">Which package?</span>
+              <select name="package"
+                      style="width:100%;padding:10px 12px;margin-top:6px;border:1px solid var(--border);border-radius:6px;font-size:1rem;font-family:inherit;background:#fff">
+                <option>Not sure yet</option>
+                <option>Starter</option>
+                <option>Pro</option>
+                <option>Team</option>
+              </select>
+            </label>
+            <label style="display:block;margin-bottom:18px">
+              <span style="font-weight:600;font-size:.9rem">Message</span>
+              <textarea name="message" rows="4" required
+                        style="width:100%;padding:10px 12px;margin-top:6px;border:1px solid var(--border);border-radius:6px;font-size:1rem;font-family:inherit;resize:vertical"></textarea>
+            </label>
+            <button class="btn btn-primary btn-block btn-lg" type="submit">Send message</button>
+          </form>
+
+          <p class="muted" style="margin-top:16px">Or email us directly at
+            <a href="mailto:hello@benios.education">hello@benios.education</a>.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div><a class="brand" href="index.html"><span class="mark">B</span> BENIOS Education</a><p class="muted" style="margin-top:12px; max-width:36ch">Practical immersive-technology education, based in Singapore.</p></div>
+        <div><h4>Explore</h4><a href="about.html">About</a><a href="xr-growth.html">XR Growth in SG</a><a href="packages.html">Packages</a></div>
+        <div><h4>Get started</h4><a href="packages.html">Pricing</a><a href="book.html">Book a call</a><a href="book.html">Contact</a></div>
+        <div><h4>Contact</h4><a href="mailto:hello@benios.education">hello@benios.education</a><a href="book.html">Schedule a chat</a></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 BENIOS Education. All rights reserved.</span><span>Made in Singapore 🇸🇬</span></div>
+    </div>
+  </footer>
+
+  <script>
+    // If a buyer lands here from the Shopify order-confirmation redirect
+    // (e.g. book.html?purchased=pro), show a tailored welcome message.
+    (function () {
+      var pkg = new URLSearchParams(location.search).get("purchased");
+      if (pkg) {
+        document.getElementById("welcome").textContent = "🎉 Payment received — you're in!";
+        var h1 = document.querySelector("h1");
+        if (h1) h1.textContent = "Thanks! Now book your kickoff call.";
+      }
+    })();
+  </script>
+</body>
+</html>
