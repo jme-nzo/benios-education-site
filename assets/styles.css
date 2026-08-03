@@ -209,6 +209,38 @@ p { margin: 0 0 1rem; }
 .callout { background: var(--accent-subtle); border: 1px solid var(--accent-muted); border-radius: var(--radius); padding: 18px 20px; margin: 24px 0; }
 .embed-wrap { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); background: #fff; }
 
+/* ---------- Bento (audience / Join Us) ---------- */
+.bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
+.bento .card { display: flex; flex-direction: column; }
+.bento .card h3 { font-size: 1.35rem; }
+.bento .card .muted { flex: 1; }
+.bento .card .btn { margin-top: 18px; align-self: flex-start; }
+
+/* ---------- Image placeholders ---------- */
+.ph { background: var(--canvas-inset); border: 1px dashed var(--border); border-radius: var(--radius); display: grid; place-items: center; color: var(--fg-subtle); font-size: .85rem; text-align: center; padding: 16px; min-height: 180px; }
+.ph-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ---------- Chips (partner / client lists) ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips.center { justify-content: center; }
+.chip { background: var(--canvas-subtle); border: 1px solid var(--border-muted); border-radius: 999px; padding: 7px 15px; font-size: .9rem; color: var(--fg-muted); }
+
+/* ---------- FAQ ---------- */
+.faq { border-bottom: 1px solid var(--border-muted); padding: 18px 0; }
+.faq summary { font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::after { content: "+"; color: var(--accent); font-weight: 700; }
+.faq[open] summary::after { content: "–"; }
+.faq p { margin: 12px 0 0; color: var(--fg-muted); }
+
+/* ---------- Simple check list ---------- */
+.ticks { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.ticks li { display: flex; gap: 10px; align-items: flex-start; }
+.ticks li::before { content: "✓"; color: var(--success); font-weight: 800; flex: none; }
+
+@media (max-width: 900px) {
+  .bento { grid-template-columns: 1fr; }
+}
+
 /* ============================================================
    Scroll reveal (stats + sections on the landing page)
    Only active once JS adds .reveal-on to <body>, so content is

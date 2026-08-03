@@ -1,7 +1,7 @@
 /* ============================================================
    BENIOS Education — shared behaviour (all pages)
    1. Reveal-on-scroll + animated stat counters
-   2. Full-page section snap engine (wheel / touch / keyboard)
+   2. Gentle section snapping (settle-based, 2/3 threshold)
    Applies to any page whose <body> has class "snap-page".
    ============================================================ */
 (function () {
@@ -44,124 +44,100 @@
         if (en.target.classList.contains("stat-reveal")) countUp(en.target);
         io.unobserve(en.target);
       });
-    }, { threshold: 0.35, rootMargin: "0px 0px -8% 0px" });
+    }, { threshold: 0.3, rootMargin: "0px 0px -8% 0px" });
     els.forEach(function (e) { io.observe(e); });
   })();
 
-  /* ---------- 2. Section snap engine ---------- */
+  /* ---------- 2. Gentle section snapping ----------------------------
+     Design goals (per the style guide):
+     - Every section stays fully, natively scrollable (we never hijack
+       the wheel/touch, so it can NEVER skip two sections at once).
+     - After the user stops scrolling, we ease to a section edge — but
+       only commit to the NEXT section once they've scrolled past ~2/3
+       of the current one, so there's room to nudge without snapping.
+     - Sections taller than the viewport scroll through freely; snapping
+       only engages near their top/bottom edges, never mid-content.
+  ------------------------------------------------------------------- */
   (function () {
     if (!document.body.classList.contains("snap-page")) return;
 
     var sections = Array.prototype.slice.call(document.querySelectorAll(".snap"));
     var footer = document.querySelector(".site-footer");
     if (footer) sections.push(footer);
-    if (sections.length < 2) return;
+    var n = sections.length;
+    if (n < 2) return;
 
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var EDGE = 4;
-    var animating = false;
-    var animTimer = null;
-    var current = 0;
+    var ADVANCE = 0.66;   // must pass 2/3 of a section to snap to the next
+    var animating = false, animTimer = null, scrollTimer = null;
+    var restY = window.scrollY;   // last committed position (for direction)
 
-    function headerH() {
-      var h = document.querySelector(".site-header");
-      return h ? h.offsetHeight : 64;
-    }
-    function vh() {
-      return window.innerHeight || document.documentElement.clientHeight || 800;
-    }
-    function snapTopOf(el) {
-      return Math.round(window.scrollY + el.getBoundingClientRect().top - headerH());
-    }
-    function nearestIndex() {
-      var best = 0, bestD = Infinity;
-      for (var i = 0; i < sections.length; i++) {
-        var d = Math.abs(snapTopOf(sections[i]) - window.scrollY);
-        if (d < bestD) { bestD = d; best = i; }
-      }
-      return best;
-    }
+    function headerH() { var h = document.querySelector(".site-header"); return h ? h.offsetHeight : 64; }
+    function vh() { return window.innerHeight || document.documentElement.clientHeight || 800; }
+    function snapTop(i) { return Math.round(window.scrollY + sections[i].getBoundingClientRect().top - headerH()); }
+    function clamp(i) { return Math.max(0, Math.min(n - 1, i)); }
+
     function goTo(i) {
-      i = Math.max(0, Math.min(sections.length - 1, i));
-      current = i;
+      i = clamp(i);
+      var top = Math.max(0, snapTop(i));
+      restY = top;
+      if (Math.abs(top - window.scrollY) < 2) return;
       animating = true;
-      window.scrollTo({ top: snapTopOf(sections[i]), behavior: reduce ? "auto" : "smooth" });
+      window.scrollTo({ top: top, behavior: reduce ? "auto" : "smooth" });
       clearTimeout(animTimer);
-      animTimer = setTimeout(function () { animating = false; }, reduce ? 120 : 750);
-    }
-    // tolerance so near-full sections snap directly while genuinely tall
-    // sections still scroll through their content first
-    function slop() { return Math.max(EDGE, Math.round(vh() * 0.07)); }
-    function moreWithin(dir) {
-      var r = sections[current].getBoundingClientRect();
-      if (dir > 0) return r.bottom > vh() + slop();
-      return r.top < headerH() - slop();
+      animTimer = setTimeout(function () { animating = false; }, reduce ? 100 : 700);
     }
 
-    // Wheel (trackpad / mouse)
-    var wheelCooldown = false;
-    window.addEventListener("wheel", function (e) {
-      if (e.ctrlKey) return;
-      if (animating) { e.preventDefault(); return; }
-      var dir = e.deltaY > 0 ? 1 : (e.deltaY < 0 ? -1 : 0);
-      if (!dir) return;
-      current = nearestIndex();
-      if (moreWithin(dir)) return;
-      e.preventDefault();
-      if (wheelCooldown) return;
-      wheelCooldown = true;
-      setTimeout(function () { wheelCooldown = false; }, 140);
-      goTo(current + dir);
-    }, { passive: false });
+    // Index of the section whose top is at or just above the current scroll
+    function anchorIndex(y) {
+      var idx = 0;
+      for (var i = 0; i < n; i++) { if (snapTop(i) <= y + 8) idx = i; else break; }
+      return idx;
+    }
 
-    // Touch (mobile)
-    var startY = null;
-    window.addEventListener("touchstart", function (e) {
-      startY = e.touches[0].clientY;
-      current = nearestIndex();
-    }, { passive: true });
-    window.addEventListener("touchmove", function (e) {
-      if (animating) { e.preventDefault(); return; }
-      var r = sections[current].getBoundingClientRect();
-      var fits = r.height <= vh() - headerH() + slop();
-      if (fits) e.preventDefault();
-    }, { passive: false });
-    window.addEventListener("touchend", function (e) {
-      if (startY === null || animating) { startY = null; return; }
-      var endY = (e.changedTouches[0] || {}).clientY;
-      if (endY == null) { startY = null; return; }
-      var dy = startY - endY;
-      startY = null;
-      if (Math.abs(dy) < 28) return;
-      var dir = dy > 0 ? 1 : -1;
-      current = nearestIndex();
-      if (moreWithin(dir)) return;
-      goTo(current + dir);
+    function settle() {
+      if (animating) return;
+      var y = window.scrollY;
+      if (y < 4) { restY = 0; return; }             // resting at very top
+      var i = anchorIndex(y);
+      if (i >= n - 1) { restY = y; return; }         // last section / footer: free
+
+      var topI = snapTop(i), topNext = snapTop(i + 1);
+      var gap = topNext - topI;                       // laid-out height of section i
+      var frame = vh() - headerH();
+      var progressed = y - topI;
+      var goingDown = (y - restY) >= 0;
+      var tall = gap > frame + Math.round(vh() * 0.07);
+
+      if (tall) {
+        // Only snap near the edges; leave the middle to natural scrolling.
+        if (topNext - y <= frame * 0.34) { goTo(i + 1); return; }
+        if (progressed <= frame * 0.16) { goTo(i); return; }
+        restY = y;                                    // reading the middle
+      } else {
+        if (goingDown) { progressed >= gap * ADVANCE ? goTo(i + 1) : goTo(i); }
+        else           { progressed <= gap * (1 - ADVANCE) ? goTo(i) : goTo(i + 1); }
+      }
+    }
+
+    window.addEventListener("scroll", function () {
+      if (animating) return;
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(settle, 150);          // snap after scrolling stops
     }, { passive: true });
 
-    // Keyboard
+    // Keyboard: one section per press
     window.addEventListener("keydown", function (e) {
       if (animating) return;
       var t = e.target;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
-      var down = e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ";
+      var down = e.key === "ArrowDown" || e.key === "PageDown";
       var up = e.key === "ArrowUp" || e.key === "PageUp";
       if (!down && !up) return;
-      current = nearestIndex();
-      var dir = down ? 1 : -1;
-      if (moreWithin(dir)) return;
       e.preventDefault();
-      goTo(current + dir);
+      var i = anchorIndex(window.scrollY);
+      if (down) goTo(i + 1);
+      else goTo((window.scrollY - snapTop(i) < 8) ? i - 1 : i);
     });
-
-    // keep index synced after native/inertial scrolling settles
-    var settle;
-    window.addEventListener("scroll", function () {
-      if (animating) return;
-      clearTimeout(settle);
-      settle = setTimeout(function () { current = nearestIndex(); }, 90);
-    }, { passive: true });
-
-    current = nearestIndex();
   })();
 })();
