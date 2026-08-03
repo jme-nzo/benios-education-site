@@ -149,7 +149,7 @@ p { margin: 0 0 1rem; }
 
 /* ---------- Stats ---------- */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
-.stat .num { font-size: 2.4rem; font-weight: 800; color: var(--accent-emphasis); letter-spacing: -0.02em; }
+.stat .num { font-size: clamp(3rem, 5vw, 4rem); font-weight: 800; color: var(--accent-emphasis); letter-spacing: -0.02em; line-height: 1.05; }
 .stat .label { color: var(--fg-muted); font-size: .95rem; }
 
 /* ---------- Pricing ---------- */
@@ -245,8 +245,8 @@ body.reveal-on .stat-reveal.in-view .stat:nth-child(4) { transition-delay: .30s;
    falls back to top-alignment when a section is taller than the
    viewport, so content is never clipped behind the header.
    ============================================================ */
-html { scroll-behavior: auto; } /* JS controls scrolling on the landing page */
-body.landing .snap {
+html { scroll-behavior: auto; } /* JS controls scrolling on snap pages */
+body.snap-page .snap {
   min-height: calc(100vh - 64px);
   min-height: calc(100dvh - 64px);
   display: flex; flex-direction: column;
@@ -266,15 +266,19 @@ body.landing .snap {
 html, body { max-width: 100%; overflow-x: clip; }
 img, svg { max-width: 100%; }
 
-@media (max-width: 900px) {
-  .grid-3, .pricing, .footer-grid { grid-template-columns: 1fr; }
-  .grid-2 { grid-template-columns: 1fr; }
-  .stats { grid-template-columns: repeat(2, 1fr); }
+/* Collapse the nav to a hamburger earlier (more tabs need more room) */
+@media (max-width: 1024px) {
   .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; flex-direction: column; background: #fff; border-bottom: 1px solid var(--border); padding: 12px 24px; align-items: stretch; gap: 2px; }
   .nav-links.open { display: flex; }
   .nav-links a { padding: 12px; }
   .nav-cta { margin: 8px 0 0; text-align: center; }
   .nav-toggle { display: block; }
+}
+
+@media (max-width: 900px) {
+  .grid-3, .pricing, .footer-grid { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
   .cta-band { padding: 40px 24px; }
   .section { padding: 60px 0; }
   .hero { padding: 64px 0 48px; }
@@ -283,7 +287,7 @@ img, svg { max-width: 100%; }
 @media (max-width: 560px) {
   .container { padding: 0 18px; }
   .stats { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
-  .stat .num { font-size: 2rem; }
+  .stat .num { font-size: clamp(2.4rem, 11vw, 3rem); }
   .hero { padding: 48px 0 36px; }
   .hero .lead, .lead { font-size: 1.05rem; }
   .btn-lg { padding: 12px 20px; font-size: 1rem; }
