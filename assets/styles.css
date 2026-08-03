@@ -233,35 +233,29 @@ body.reveal-on .stat-reveal.in-view .stat:nth-child(4) { transition-delay: .30s;
 }
 
 /* ============================================================
-   Section snapping — landing page only (scoped via :has()).
-   Each major section is a frame that fills the viewport and
-   snaps into place on every scroll (mandatory), on all screen
-   sizes including mobile. Disabled only when the visitor
-   prefers reduced motion.
-   IMPORTANT: the root scroll container must NOT use
-   `overflow: hidden` (see the Responsive block — it uses
-   `overflow-x: clip`), because `hidden` turns the root into its
-   own scroll container and silently disables scroll-snap.
+   Section framing — landing page only.
+   Each major section is sized to fill the viewport (minus the
+   64px sticky header) so it reads as a full-screen "frame".
+   The actual snapping is driven by JavaScript (see the snap
+   engine script in index.html) rather than CSS scroll-snap,
+   which proved unreliable across trackpads/devices. Frames and
+   the JS engine are both disabled for reduced-motion visitors,
+   who get normal document flow.
    `justify-content: safe center` centres short sections but
    falls back to top-alignment when a section is taller than the
    viewport, so content is never clipped behind the header.
    ============================================================ */
-@media (prefers-reduced-motion: no-preference) {
-  html:has(body.landing) { scroll-snap-type: y mandatory; scroll-padding-top: 64px; }
-  body.landing .snap {
-    scroll-snap-align: start;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex; flex-direction: column;
-    justify-content: center;
-    justify-content: safe center;
-  }
-  body.landing .snap.hero {
-    min-height: calc(100vh - 64px);
-    min-height: calc(100dvh - 64px);
-  }
-  /* let the footer be a reachable snap point too */
-  body.landing .site-footer { scroll-snap-align: start; }
+html { scroll-behavior: auto; } /* JS controls scrolling on the landing page */
+body.landing .snap {
+  min-height: calc(100vh - 64px);
+  min-height: calc(100dvh - 64px);
+  display: flex; flex-direction: column;
+  justify-content: center;
+  justify-content: safe center;
+  /* trim the tall section padding so content fits the frame and snaps
+     cleanly; flex-centering handles the vertical breathing room */
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 /* ---------- Responsive ---------- */
